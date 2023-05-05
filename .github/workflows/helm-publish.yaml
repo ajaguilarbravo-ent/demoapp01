@@ -13,7 +13,6 @@ on:
 env:
   HELM_EXPERIMENTAL_OCI: 1 #enable OCI support
   HELM_VERSION_TO_INSTALL: 3.11.0 # version of HELM to install
-  GHCR_IMAGE: ghcr.io/${{ github.repository_owner }}/app01
 
 jobs:
 
@@ -33,14 +32,12 @@ jobs:
           # Version of helm
           version: ${{ env.HELM_VERSION_TO_INSTALL }} # default is latest
 
-      - name: Login to GHCR using helm
-        run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | helm registry login ${{ env.GHCR_IMAGE }} --username ${{ github.repository_owner }} --password-stdin
-
-      - name: save helm chart to local registry
-        run: |
-          helm chart save ${{ github.workspace }}/app01/ ${{ env.GHCR_IMAGE }}:${{ github.sha }}
-
-      - name: publish chart to acr
-        run: |
-          helm push ${{ env.GHCR_IMAGE }}:${{ github.sha }}
+      - name: Push Helm chart to OCI compatible registry (Github)
+        uses: bsord/helm-push@4.2.0
+        with:
+          useOCIRegistry: true
+          registry-url:  oci://ghcr.io/${{ github.repository_owner }}/${{ github.repository }}
+          username: ${{ github.repository_owner }}
+          access-token: ${{ secrets.REGISTRY_ACCESS_TOKEN }}
+          force: true
+          chart-folder: app01
