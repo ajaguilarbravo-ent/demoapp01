@@ -5,7 +5,7 @@ WORKDIR /app
 COPY go.mod .
 RUN go mod download
 
-COPY static .
+COPY static ./
 COPY *.go .
 
 RUN CGO_ENABLED=0 GOOS=linux go build -o app01
@@ -14,10 +14,10 @@ FROM alpine:3.13 AS build-release-stage
 
 RUN apk add --no-cache ca-certificates bash
 
-COPY --from=build-stage /app/static /app/static
-COPY --from=build-stage /app/app01 /app/app01
-
 WORKDIR /app
+
+COPY --from=build-stage /app/static ./static
+COPY --from=build-stage /app/app01 ./app01
 
 EXPOSE 8080
 
