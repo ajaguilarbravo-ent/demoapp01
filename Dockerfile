@@ -21,5 +21,5 @@ COPY --from=build-stage /app/app01 ./app01
 
 EXPOSE 8080
 
-CMD ["/app01"]
+CMD ["./app01"]
 
