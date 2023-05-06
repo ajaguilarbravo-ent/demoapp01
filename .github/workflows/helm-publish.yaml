@@ -9,7 +9,7 @@ on:
 env:
   ARGO_SERVER: argocd.20.103.115.121.nip.io
   CHARTMUSEUM_SERVER: https://chart.20.103.115.121.nip.io
-  CHART_FOLDER: charts
+  CHART_ROOT_FOLDER: charts
 
 jobs:
   build-push:
@@ -26,7 +26,7 @@ jobs:
       - name: Set ENV variables
         run: |
           REPO_NAME=${GITHUB_REPOSITORY#*/}
-          CHART_APP_FOLDER="${CHART_FOLDER}/${REPO_NAME}"
+          CHART_APP_FOLDER="${CHART_ROOT_FOLDER}/${REPO_NAME}"
           echo "REPO_NAME=${REPO_NAME}" >> "$GITHUB_ENV"
           echo "CHART_APP_FOLDER=${CHART_APP_FOLDER}" >> "$GITHUB_ENV"
       
