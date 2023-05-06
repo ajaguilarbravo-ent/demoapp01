@@ -36,11 +36,11 @@ jobs:
 
       - name: Get Chart version
         run: |
-          echo {{ env.CHART_FOLDER }}
-          echo {{ env.ARGO_SERVER }}
-          echo "{{ env.CHART_FOLDER }}"
-          echo "{{ env.ARGO_SERVER }}"
-          echo "CHART_VERSION=$(helm show chart {{ env.CHART_FOLDER }} | grep ^version | awk '{ print $2 }')" >> "GITHUB_ENV"
+          echo $CHART_FOLDER
+          echo $ARGO_SERVER
+          echo "$CHART_FOLDER"
+          echo "$ARGO_SERVER"
+          echo "CHART_VERSION=$(helm show chart $CHART_FOLDER | grep ^version | awk '{ print $2 }')" >> "GITHUB_ENV"
 
       - name: Setup ArgoCD CLI 
         uses: imajeetyadav/argocd-cli@v1
@@ -50,8 +50,8 @@ jobs:
       - name: Check Argo CD CLI version
         run: |
           argocd version --client
-          argocd login {{ env.ARGO_SERVER }} --username {{ secret.ARGO_USER }} --password {{ secret.ARGO_PASSWD }}
-          echo "argocd app set argocd/demoapp01 --project default --revision {{ env.CHART_VERSION }}"
+          argocd login $ARGO_SERVER --username {{ secret.ARGO_USER }} --password {{ secret.ARGO_PASSWD }}
+          echo "argocd app set argocd/demoapp01 --project default --revision $CHART_VERSION"
 
       # - name: Push Helm chart to OCI compatible registry (Github)
       #   uses: bsord/helm-push@v4.1.0
