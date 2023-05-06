@@ -24,9 +24,13 @@ jobs:
       
       - name: Set ENV variables
         run: |
-          echo "REPO_NAME=${GITHUB_REPOSITORY#*/}" >> "$GITHUB_ENV"
-          echo "CHART_APP_FOLDER=${CHART_FOLDER}/${REPO_NAME}" >> "$GITHUB_ENV"
+          REPO_NAME=${GITHUB_REPOSITORY#*/}
+          CHART_APP_FOLDER="${CHART_FOLDER}/${REPO_NAME}"
+          echo "REPO_NAME=${REPO_NAME}" >> "$GITHUB_ENV"
+          echo "CHART_APP_FOLDER=${CHART_APP_FOLDER}" >> "$GITHUB_ENV"
 
+          echo $REPO_NAME
+          echo $CHART_APP_FOLDER
           echo $GITHUB_ENV
       
       - name: Set Application version 
