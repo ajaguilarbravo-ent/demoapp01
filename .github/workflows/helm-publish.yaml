@@ -8,6 +8,7 @@ on:
 
 env:
   ARGO_SERVER: argocd.20.103.115.121.nip.io
+  CHARTMUSEUM_SERVER: https://chart.20.103.115.121.nip.io
   CHART_FOLDER: charts
 
 jobs:
@@ -28,45 +29,35 @@ jobs:
           CHART_APP_FOLDER="${CHART_FOLDER}/${REPO_NAME}"
           echo "REPO_NAME=${REPO_NAME}" >> "$GITHUB_ENV"
           echo "CHART_APP_FOLDER=${CHART_APP_FOLDER}" >> "$GITHUB_ENV"
-
-          echo $REPO_NAME
-          echo $CHART_APP_FOLDER
-          echo $GITHUB_ENV
       
       - name: Set Application version 
         run: |
           OUTPUT=$(grep ^appVersion $CHART_APP_FOLDER/Chart.yaml | awk '{ print $2 }' | tr -d '"')
           echo "APP_VERSION=$OUTPUT" >> "$GITHUB_ENV"
 
-          echo $REPO_NAME
-          echo $CHART_APP_FOLDER
-
       - name : Set Helm chart version
         run: |
           OUTPUT=$(grep ^version $CHART_APP_FOLDER/Chart.yaml | awk '{ print $2 }')
           echo "CHART_VERSION=$OUTPUT" >> "$GITHUB_ENV"                    
 
-          echo $REPO_NAME
-          echo $CHART_APP_FOLDER
+      - name: Push Helm chart to Chartmuseum
+        uses: bsord/helm-push@v4.1.0
+        with:
+          registry-url: {{ env.CHARTMUSEUM_SERVER }}
+          username: ${{ secrets.CHART_USER }}
+          password: ${{ secrets.CHART_PASSWD }}
+          force: true
+          chart-folder: ${{ env.CHART_APP_FOLDER }}
 
-      # - name: Push Helm chart to Chartmuseum
-      #   uses: bsord/helm-push@v4.1.0
-      #   with:
-      #     registry-url: https://chart.20.103.115.121.nip.io
-      #     username: ${{ secrets.CHART_USER }}
-      #     password: ${{ secrets.CHART_PASSWD }}
-      #     force: true
-      #     chart-folder: ${{ env.CHART_FOLDER }}
-
-      # - name: Setup ArgoCD CLI 
-      #   uses: imajeetyadav/argocd-cli@v1
-      #   with:
-      #     version: v2.7.1 # optional 
+      - name: Setup ArgoCD CLI 
+        uses: imajeetyadav/argocd-cli@v1
+        with:
+          version: v2.7.1 # optional 
       
-      # - name: Check Argo CD CLI version
-      #   run: |
-      #     argocd login $ARGO_SERVER --username ${{ secrets.ARGO_USER }} --password ${{ secrets.ARGO_PASSWD }}
-      #     echo "argocd app set argocd/$REPO_NAME --project default --revision $CHART_VERSION"
+      - name: Check Argo CD CLI version
+        run: |
+          argocd login $ARGO_SERVER --username ${{ secrets.ARGO_USER }} --password ${{ secrets.ARGO_PASSWD }}
+          echo "argocd app set argocd/$REPO_NAME --project default --revision $CHART_VERSION"
 
       # - name: Push Helm chart to OCI compatible registry (Github)
       #   uses: bsord/helm-push@v4.1.0
