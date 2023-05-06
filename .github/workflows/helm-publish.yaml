@@ -25,7 +25,7 @@ jobs:
       - name: Push Helm chart to Chartmuseum
         uses: bsord/helm-push@v4.1.0
         with:
-          registry-url: http://chart.20.103.115.121.nip.io
+          registry-url: https://chart.20.103.115.121.nip.io
           username: ${{ secrets.CHART_USER }}
           password: ${{ secrets.CHART_PASSWD }}
           force: true
