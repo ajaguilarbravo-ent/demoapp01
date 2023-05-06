@@ -1,14 +1,10 @@
 name: Push Helm Chart to GHR
 
 on:
+  push:
+    branches: [main]
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-    inputs:
-      version_tag:
-        description: 'Version tag'
-        required: true
-        default: 'latest' 
-        type: string
 
 jobs:
 
@@ -31,6 +27,14 @@ jobs:
           force: true
           chart-folder: app01
 
+      - name: Setup ArgoCD CLI 
+        uses: imajeetyadav/argocd-cli@v1
+        with:
+          version: v2.7.1 # optional 
+      
+      - name: Check Argo CD CLI version
+        run: |
+          argocd version 
       # - name: Push Helm chart to OCI compatible registry (Github)
       #   uses: bsord/helm-push@v4.1.0
       #   with:
