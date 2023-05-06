@@ -43,7 +43,7 @@ jobs:
       - name: Push Helm chart to Chartmuseum
         uses: bsord/helm-push@v4.1.0
         with:
-          registry-url: {{ env.CHARTMUSEUM_SERVER }}
+          registry-url: ${{ env.CHARTMUSEUM_SERVER }}
           username: ${{ secrets.CHART_USER }}
           password: ${{ secrets.CHART_PASSWD }}
           force: true
