@@ -26,6 +26,8 @@ jobs:
         uses: bsord/helm-push@v4.1.0
         with:
           registry-url: http://chart.20.103.115.121.nip.io
+          username: 
+          password: 
           force: true
           chart-folder: app01
 
