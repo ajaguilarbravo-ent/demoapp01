@@ -25,11 +25,11 @@ jobs:
       - name: Set ENV variables
         run: |
           echo "REPO_NAME=${GITHUB_REPOSITORY#*/}" >> "$GITHUB_ENV"
-          OUTPUT=$(grep ^appVersion $CHART_FOLDER/Chart.yaml | awk '{ print $2 }' | tr -d '"')
-          echo "APP_VERSION=$OUTPUT" >> "$GITHUB_ENV"
-          OUTPUT=$(grep ^version $CHART_FOLDER/Chart.yaml | awk '{ print $2 }')
-          echo "CHART_VERSION=$OUTPUT" >> "$GITHUB_ENV"
           echo "CHART_APP_FOLDER=${CHART_FOLDER}/${REPO_NAME}" >> "$GITHUB_ENV"
+          OUTPUT=$(grep ^appVersion $CHART_APP_FOLDER/Chart.yaml | awk '{ print $2 }' | tr -d '"')
+          echo "APP_VERSION=$OUTPUT" >> "$GITHUB_ENV"
+          OUTPUT=$(grep ^version $CHART_APP_FOLDER/Chart.yaml | awk '{ print $2 }')
+          echo "CHART_VERSION=$OUTPUT" >> "$GITHUB_ENV"          
 
           echo $REPO_NAME
           echo $APP_VERSION
