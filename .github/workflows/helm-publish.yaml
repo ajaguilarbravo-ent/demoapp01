@@ -8,7 +8,7 @@ on:
 
 env:
   ARGO_SERVER: argocd.20.103.115.121.nip.io
-  CHART_FOLDER: app01
+  CHART_FOLDER: charts
 
 jobs:
   build-push:
@@ -18,8 +18,23 @@ jobs:
       packages: write
 
     steps:
+
       - name: Checkout repository
         uses: actions/checkout@v3
+      
+      - name: Set ENV variables
+        run: |
+          echo "REPO_NAME=${GITHUB_REPOSITORY#*/}" >> "$GITHUB_ENV"
+          OUTPUT=$(grep ^appVersion $CHART_FOLDER/Chart.yaml | awk '{ print $2 }' | tr -d '"')
+          echo "APP_VERSION=$OUTPUT" >> "$GITHUB_ENV"
+          OUTPUT=$(grep ^version $CHART_FOLDER/Chart.yaml | awk '{ print $2 }')
+          echo "CHART_VERSION=$OUTPUT" >> "$GITHUB_ENV"
+          echo "CHART_APP_FOLDER=${CHART_FOLDER}/${REPO_NAME}" >> "$GITHUB_ENV"
+
+          echo $REPO_NAME
+          echo $APP_VERSION
+          echo $CHART_VERSION
+          echo $CHART_APP_FOLDER
 
       - name: Push Helm chart to Chartmuseum
         uses: bsord/helm-push@v4.1.0
@@ -30,16 +45,6 @@ jobs:
           force: true
           chart-folder: ${{ env.CHART_FOLDER }}
 
-      - name: List files
-        run: |
-          ls -lrt .
-
-      - name: Get Chart version
-        run: |
-          OUTPUT=$(helm show chart $CHART_FOLDER | grep ^version | awk '{ print $2 }')
-          echo "CHART_VERSION=$OUTPUT"
-          echo "CHART_VERSION=$OUTPUT" >> "$GITHUB_ENV"
-
       - name: Setup ArgoCD CLI 
         uses: imajeetyadav/argocd-cli@v1
         with:
@@ -47,8 +52,6 @@ jobs:
       
       - name: Check Argo CD CLI version
         run: |
-          echo "Chart version id: ${{ env.CHART_VERSION }}"
-          argocd version --client
           argocd login $ARGO_SERVER --username ${{ secrets.ARGO_USER }} --password ${{ secrets.ARGO_PASSWD }}
           echo "argocd app set argocd/demoapp01 --project default --revision $CHART_VERSION"
 
