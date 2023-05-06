@@ -5,10 +5,10 @@
 replicaCount: 1
 
 image:
-  repository: ghcr.io/ajaguilarbravo-ent/demoapp01:0.0.2
+  repository: ghcr.io/ajaguilarbravo-ent/demoapp01
   pullPolicy: IfNotPresent
   # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
+  tag: "0.0.2"
 
 imagePullSecrets: []
 nameOverride: ""
