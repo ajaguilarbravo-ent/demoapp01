@@ -36,13 +36,15 @@ jobs:
 
       - name: Get Chart version
         run: |
-          echo "CHART_VERSION=$(helm show chart $CHART_FOLDER | grep ^version | awk '{ print $2 }')" >> "GITHUB_ENV"
+          CHART_VERSION=$(helm show chart $CHART_FOLDER | grep ^version | awk '{ print $2 }')
           echo $CHART_VERSION
+          echo "CHART_VERSION=$CHART_VERSION" >> "$GITHUB_ENV"
+          echo "${{ env.CHART_VERSION }}"
 
       - name: Setup ArgoCD CLI 
         uses: imajeetyadav/argocd-cli@v1
         with:
-          version: v2.7.7 # optional 
+          version: v2.7.1 # optional 
       
       - name: Check Argo CD CLI version
         run: |
