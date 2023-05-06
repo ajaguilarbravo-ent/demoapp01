@@ -38,6 +38,7 @@ jobs:
           echo $CHART_APP_FOLDER
 
       - name : Set Helm chart version
+        run: |
           OUTPUT=$(grep ^version $CHART_APP_FOLDER/Chart.yaml | awk '{ print $2 }')
           echo "CHART_VERSION=$OUTPUT" >> "$GITHUB_ENV"                    
 
